@@ -1,0 +1,60 @@
+version: '3'
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/code
+    depends_on:
+      #- db_dev
+      - db_test
+    environment:
+      FLASK_ENV: testing 
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:5000/ping || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  
+  db_dev:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: testing
+      MYSQL_DATABASE: development
+      MYSQL_USER: testing
+      MYSQL_PASSWORD: testing
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+
+  db_test:
+    image: mariadb
+    command: --init-file=/docker-entrypoint-initdb.d/init_db_test.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: testing
+      MYSQL_DATABASE: testing 
+      MYSQL_USER: testing
+      MYSQL_PASSWORD: testing
+    ports:
+      - "3307:3306" 
+    volumes:
+      - ./init_db_test.sql:/docker-entrypoint-initdb.d/init_db_test.sql
+
+  test_runner:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/code
+    environment:
+      FLASK_ENV: testing 
+    command: sh -c "python3 test/bdd/test_bdd.py && python3 test/contract/test_contract.py && python3 -m unittest discover test/unit/ && python3 test/integration/test_integration.py"
+    #command: sh -c "python3 test/bdd/test_bdd.py && python3 test/contract/test_contract.py && python3 -m unittest discover test/unit/"
+    depends_on:
+  #   - db_dev
+      - db_test
+      - api
