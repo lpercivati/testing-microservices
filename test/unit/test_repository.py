@@ -30,5 +30,23 @@ class TestUserRepository(unittest.TestCase):
         self.mock_db.session.add.assert_called_once()
         self.mock_db.session.commit.assert_called_once()
 
+    def test_delete_by_name_user_exists(self):
+        user1 = user.User(id=1, name="Leandro", email="lean@gmail.com"),
+
+        self.mock_db.session.query().filter_by().first.return_value = user1
+        
+        self.repository.delete_by_name('Leandro')
+        
+        self.mock_db.session.delete.assert_called_once_with(user1)
+        self.mock_db.session.commit.assert_called_once()
+
+    def test_delete_by_name_user_does_not_exist(self):
+        self.mock_db.session.query().filter_by().first.return_value = None
+        
+        self.repository.delete_by_name('Leandro')
+        
+        self.mock_db.session.delete.assert_not_called()
+        self.mock_db.session.commit.assert_not_called()
+
 if __name__ == '__main__':
     unittest.main()

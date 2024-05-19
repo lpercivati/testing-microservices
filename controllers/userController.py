@@ -16,3 +16,9 @@ class UserController:
         email = datos_usuario.get('email')
         self.userService.create_user(name, email)
         return jsonify({'mensaje': 'Usuario creado exitosamente'})
+    
+    def delete_user(self):
+        datos_usuario = request.get_json()
+        name = datos_usuario.get('name')
+        self.userService.delete_by_name(name)
+        return jsonify({'mensaje': 'Usuario borrado exitosamente'})

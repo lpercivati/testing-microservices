@@ -26,6 +26,7 @@ pingController = PingController()
 userBP = Blueprint('users', __name__)
 userBP.route('/users', methods=['GET'])(userController.get_users)
 userBP.route('/users', methods=['POST'])(userController.create_user)
+userBP.route('/users', methods=['DELETE'])(userController.delete_user)
 
 pingBP = Blueprint("ping", __name__)
 pingBP.route("/ping", methods=['GET'])(pingController.ping)

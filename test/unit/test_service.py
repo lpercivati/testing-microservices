@@ -25,5 +25,10 @@ class TestUserService(unittest.TestCase):
         
         self.mock_repository.create.assert_called_once_with("Leo", "leo@gmail.com") 
 
+    def test_delete_user(self):
+        self.user_service.delete_by_name("Leo")
+        
+        self.mock_repository.delete_by_name.assert_called_once_with("Leo") 
+
 if __name__ == '__main__':
     unittest.main()

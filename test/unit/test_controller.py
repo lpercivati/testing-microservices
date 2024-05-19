@@ -39,12 +39,23 @@ class TestUserController(unittest.TestCase):
                 self.assertEqual(response.status_code, 200)
                 self.assertEqual(response.json, {'mensaje': 'Usuario creado exitosamente'})
 
+    def test_delete_user(self):
+        app = Flask(__name__)
+        
+        with app.test_request_context():
+            with unittest.mock.patch('flask.request.get_json') as mock_get_json:
+                mock_get_json.return_value = {'name': 'new_user'}
+                response = self.controller.delete_user()
+                self.mock_user_service.delete_by_name.assert_called_once_with('new_user')
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.json, {'mensaje': 'Usuario borrado exitosamente'})
+
 if __name__ == '__main__':
     unittest.main()
 
 
 #python3 -m unittest discover test/unit/
-#FLASK_ENV=testing python3 -m unittest discover test/integration/
+#FLASK_ENV=testing python3 -m unittest discover test/functional/
 
 #python3 -m coverage run test/unit/test_repository.py
 #python3 -m coverage run -m unittest discover test/unit/

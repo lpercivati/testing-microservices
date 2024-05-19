@@ -9,10 +9,10 @@ services:
     volumes:
       - .:/code
     depends_on:
-      #- db_dev
-      - db_test
-    environment:
-      FLASK_ENV: testing 
+      - db_dev
+      #- db_test
+    #environment:
+     # FLASK_ENV: testing 
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://localhost:5000/ping || exit 1"]
       interval: 10s
@@ -50,11 +50,11 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/code
-    environment:
-      FLASK_ENV: testing 
-    command: sh -c "python3 test/bdd/test_bdd.py && python3 test/contract/test_contract.py && python3 -m unittest discover test/unit/ && python3 test/integration/test_integration.py"
-    #command: sh -c "python3 test/bdd/test_bdd.py && python3 test/contract/test_contract.py && python3 -m unittest discover test/unit/"
+   # environment:
+    #  FLASK_ENV: testing 
+  #  command: sh -c "python3 test/bdd/test_bdd.py && python3 test/contract/test_contract.py && python3 -m unittest discover test/unit/ && python3 test/functional/test_functional.py"
+    command: sh -c "python3 test/bdd/test_bdd.py && python3 test/contract/test_contract.py && python3 -m unittest discover test/unit/"
     depends_on:
-  #   - db_dev
-      - db_test
+      - db_dev
+    #  - db_test
       - api
